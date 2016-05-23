@@ -22,12 +22,12 @@ namespace RunnerEngine.Objects
 		/// <summary>
 		/// Type of game object
 		/// </summary>
-		public override ErgoType Type { get { return ErgoType.Tree; } }
+		public override PoolObjectType Type { get { return PoolObjectType.Tree; } }
 
 		public override int Variation { get { return _variation; } }
 		int _variation;
 
-		public override bool LargeTree { get { return _largeTree; } }
+		public bool LargeTree { get { return _largeTree; } }
 		bool _largeTree;
 	}
 }

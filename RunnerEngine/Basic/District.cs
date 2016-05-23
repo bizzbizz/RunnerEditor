@@ -16,7 +16,7 @@ namespace RunnerEngine
 			for (int i = 0; i < Houses.Length; i++)
 			{
 				var house = Houses[(i + startRandom) % Houses.Length];
-				if (house.Cats.Match(draft))
+				if (house.CatSignature.Match(draft))
 					return house;
 			}
 			return null;

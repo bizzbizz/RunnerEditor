@@ -35,10 +35,13 @@ namespace RunnerEngine
 			if(draft.Has(GameplayDraft.House))
 			{
 				House = scenery.FindSuitableHouse(draft);
+				if (House != null)
+					Width += House.Width;
 			}
 			if(draft.Has(GameplayDraft.Tree))
 			{
 				Cells[0] = new Tree(StartX);
+				Width += 2;
 			}
 			if (draft.Has(GameplayDraft.Eagle))
 			{
@@ -48,109 +51,67 @@ namespace RunnerEngine
 					Cells[2] = new Eagle(StartX, 2);
 				if (draft.Has(GameplayDraft.DangerLane3))
 					Cells[3] = new Eagle(StartX, 3);
+				Width += 2;
 			}
 		}
-		//public Chunk(StaticObject cell)
-		//{
-		//	StartX = cell.X;
-		//	MainLanes = 7;
-		//	Cells = new StaticObject?[4];
-		//	if (cell.Type != ErgoType.None)
-		//	{
-		//		Cells[cell.Lane] = cell;
-		//	}
-		//	if (cell.Type.Has(ErgoType.Good))
-		//	{
-		//		//on main lane
-		//		MainLanes |= cell.Lane;
-		//	}
-		//	else if (cell.Type.Has(ErgoType.Bad))
-		//	{
-		//		//off main lane
-		//		switch (cell.Lane)
-		//		{
-		//			case 1:
-		//				MainLanes &= 6;//b110 lane 2,3
-		//				break;
-		//			case 2:
-		//				MainLanes &= 5;//b101 lane 1,3
-		//				break;
-		//			case 3:
-		//				MainLanes &= 3;//b011 lane 1,2
-		//				break;
-		//			default:
-		//				break;
-		//		}
-		//	}
-		//	else
-		//	{
-		//		//not related to main lane
-		//	}
-		//}
-		//public Chunk AddERGO(StaticObject cell, float minDist)
-		//{
-		//	//find x
-		//	float dist = System.Math.Min(minDist, Width / 2);
-		//	cell.X = StartX + dist;
 
-		//	//create chunk
-		//	Chunk chunk = new Chunk(cell);
-
-		//	//update widths
-		//	chunk.Width = Width - dist;
-		//	Width = dist;
-
-		//	//update chain
-		//	chunk.Next = Next;
-		//	Next = chunk;
-
-		//	//return new chunk
-		//	return chunk;
-		//}
-
-		public IEnumerable<BaseObject> MakeHouseAndCats()
+		public IEnumerable<BaseObject> MakeOthers()
 		{
-			if (House == null) return null;
-			List<BaseObject> list = new List<BaseObject>();
-			list.Add(new House(StartX, House.Variation));
-			list.AddRange(House.GetCats());
+			var list = new List<BaseObject>();
+			if (House != null)
+			{
+				list.Add(new House(StartX, House.Variation));
+			}
+			foreach (var cell in Cells)
+			{
+				if(cell!=null)
+				{
+					list.Add(cell);
+				}
+			}
 			return list;
 		}
 		public IEnumerable<BaseObject> MakePeople(int count)
 		{
 			var people = new BaseObject[count];
+			float x = StartX;
 			for (int i = 0; i < count; i++)
 			{
-				people[i] = new MobilePerson(StartX);
+				people[i] = new MobilePerson(x);
+				x += 2;
 			}
+			if (x > Width) Width = x;
 			return people;
 		}
 		public IEnumerable<BaseObject> MakeCoins(float innerSpace)
 		{
 			List<BaseObject> list = new List<BaseObject>();
 			int count = (int)(Width / innerSpace);
+			float x = StartX;
 			if (MainLanes == 7)
 			{
-				list.Add(new Coin(StartX, MainLanes, 3, innerSpace));
-				StartX += Width / 2;
+				list.AddRange(Coin.CreateCollection(x, MainLanes, 3, innerSpace));
+				x += innerSpace * 3;
 				count /= 2;
 				MainLanes = 2;
 			}
 			else if (MainLanes == 5 || MainLanes == 6)
 			{
-				list.Add(new Coin(StartX, MainLanes, 3, innerSpace));
-				StartX += Width / 2;
+				list.AddRange(Coin.CreateCollection(x, MainLanes, 3, innerSpace));
+				x += innerSpace * 3;
 				count /= 2;
 				MainLanes = 4;
 			}
 			else if (MainLanes == 3)
 			{
-				list.Add(new Coin(StartX, MainLanes, 3, innerSpace));
-				StartX += Width / 2;
+				list.AddRange(Coin.CreateCollection(x, MainLanes, 3, innerSpace));
+				x += innerSpace * 3;
 				count /= 2;
 				MainLanes = 1;
 			}
-			list.Add(new Coin(StartX, MainLanes, count, innerSpace));
+			list.AddRange(Coin.CreateCollection(x, MainLanes, count, innerSpace));
+			x += innerSpace * count;
+			if (x > Width) Width = x;
 			return list;
 		}
 	}

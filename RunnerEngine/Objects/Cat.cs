@@ -23,6 +23,6 @@ namespace RunnerEngine.Objects
 		/// <summary>
 		/// Type of game object
 		/// </summary>
-		public override ErgoType Type { get { return ErgoType.Cat; } }
+		public override PoolObjectType Type { get { return PoolObjectType.Cat; } }
 	}
 }

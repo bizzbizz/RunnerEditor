@@ -60,7 +60,7 @@ namespace RunnerWorldEditor
 			{
 				listBox2.Items.Add(item);
 			}
-			foreach (var item in sec.Objects)
+			foreach (var item in sec.Children)
 			{
 				listBox1.Items.Add(item);
 			}

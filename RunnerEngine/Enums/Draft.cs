@@ -22,11 +22,11 @@
 	{
 		static GameplayDraft[] safelanes = new[] { GameplayDraft.SafeLane1, GameplayDraft.SafeLane2, GameplayDraft.SafeLane3 };
 		static GameplayDraft[] dangerlanes = new[] { GameplayDraft.DangerLane1, GameplayDraft.DangerLane2, GameplayDraft.DangerLane3 };
-		internal static GameplayDraft Random()
+		internal static GameplayDraft RandomSafeLane()
 		{
 			return safelanes[EndlessLevelGenerator.random.Next(0, 3)];
 		}
-		internal static GameplayDraft Continue(GameplayDraft before)
+		internal static GameplayDraft ContinueSafeLane(GameplayDraft before)
 		{
 			if (before.Has(GameplayDraft.SafeLane1))
 				return safelanes[EndlessLevelGenerator.random.Next(0, 2)];
@@ -35,7 +35,7 @@
 			else
 				return safelanes[EndlessLevelGenerator.random.Next(0, 3)];
 		}
-		internal static GameplayDraft Block(GameplayDraft current)
+		internal static GameplayDraft BlockSafeLane(GameplayDraft current)
 		{
 			if (current.Has(GameplayDraft.Tree))
 			{

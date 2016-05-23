@@ -1,4 +1,5 @@
 ﻿using RunnerEngine.Enums;
+using System.Collections.Generic;
 
 namespace RunnerEngine.Objects
 {
@@ -7,14 +8,29 @@ namespace RunnerEngine.Objects
 	/// </summary>
 	public class Coin : BaseObject
 	{
-		public Coin(float x, byte lane, int count, float innerSpace)
+		public Coin(float x, byte lane)
 		{
 			_x = x;
 			_lane = lane;
-			_coinCount = count;
-			_innerSpace = innerSpace;
 		}
-
+		public static IEnumerable<BaseObject> CreateCollection(float startX, byte lane, int count, float innerSpace)
+		{
+			Coin[] coins = new Coin[count * lane.Ones()];
+			int j = 0;
+			for (byte i = 0; i < 3; i++)
+			{
+				if (lane.HasBit(i))
+				{
+					float x = startX;
+					for (; j < count; j++)
+					{
+						coins[j] = new Coin(x, (byte)(i + 1));
+						x += innerSpace;
+					}
+				}
+			}
+			return coins;
+		}
 		/// <summary>
 		/// 1,2,4 bitwise lane number e.g. 7=1&2&3</para>
 		/// </summary>
@@ -23,14 +39,6 @@ namespace RunnerEngine.Objects
 		/// <summary>
 		/// Type of game object
 		/// </summary>
-		public override ErgoType Type { get { return ErgoType.Coin; } }
-
-		/// <summary>
-		/// Only applicable to coins
-		/// </summary>
-		public override int CoinCount { get { return _coinCount; } }
-		int _coinCount;
-		public override float InnerSpace { get { return _innerSpace; } }
-		float _innerSpace;
+		public override PoolObjectType Type { get { return PoolObjectType.Coin; } }
 	}
 }

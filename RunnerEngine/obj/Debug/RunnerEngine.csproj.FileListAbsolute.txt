@@ -2,4 +2,3 @@ D:\Bizz\Unity\RunnerEditor\RunnerEngine\bin\Debug\RunnerEngine.dll
 D:\Bizz\Unity\RunnerEditor\RunnerEngine\bin\Debug\RunnerEngine.pdb
 D:\Bizz\Unity\RunnerEditor\RunnerEngine\obj\Debug\RunnerEngine.dll
 D:\Bizz\Unity\RunnerEditor\RunnerEngine\obj\Debug\RunnerEngine.pdb
-D:\Bizz\Unity\RunnerEditor\RunnerEngine\obj\Debug\RunnerEngine.csprojResolveAssemblyReference.cache

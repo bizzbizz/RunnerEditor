@@ -19,9 +19,22 @@ namespace RunnerEngine.Objects
 		{
 			_variation = variationId;
 			Width = width;
-			cats = Cats;
-			CatX = catX;
+			CatSignature = cats;
+
+			_cats = new List<BaseObject>();
+			if (cats.Has(CatLanes.DangerLane1))
+				_cats.Add(new Cat(catX[0], 0));
+			if (cats.Has(CatLanes.DangerLane2))
+				_cats.Add(new Cat(catX[1], 1));
+			if (cats.Has(CatLanes.DangerLane3))
+				_cats.Add(new Cat(catX[2], 2));
 		}
+
+		internal CatLanes CatSignature;
+		/// <summary>
+		/// Width of chunk the house is in
+		/// </summary>
+		public float Width;
 
 		/// <summary>
 		/// Lane number (0: ground; 1,2,3: air; etc.)
@@ -30,33 +43,12 @@ namespace RunnerEngine.Objects
 		/// <summary>
 		/// Type of game object
 		/// </summary>
-		public override ErgoType Type { get { return ErgoType.House; } }
+		public override PoolObjectType Type { get { return PoolObjectType.House; } }
 
 		public override int Variation { get { return _variation; } }
 		int _variation;
 
-		/// <summary>
-		/// Lanes of possible cats
-		/// </summary>
-		public CatLanes Cats;
-		/// <summary>
-		/// X of each cat in a possible lane (array size always 3)
-		/// </summary>
-		public float[] CatX;
-		/// <summary>
-		/// Width of chunk the house is in
-		/// </summary>
-		public float Width;
-		internal IEnumerable<BaseObject> GetCats()
-		{
-			List<BaseObject> list = new List<BaseObject>();
-			if (Cats.Has(CatLanes.DangerLane1))
-				list.Add(new Cat(CatX[0], 0));
-			if (Cats.Has(CatLanes.DangerLane2))
-				list.Add(new Cat(CatX[1], 1));
-			if (Cats.Has(CatLanes.DangerLane3))
-				list.Add(new Cat(CatX[2], 2));
-			return list;
-		}
+		public override IEnumerable<BaseObject> Children { get { return _cats; } }
+		List<BaseObject> _cats;
 	}
 }

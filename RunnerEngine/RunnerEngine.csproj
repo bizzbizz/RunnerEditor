@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Basic\Chunk.cs" />
+    <Compile Include="Enums\PoolObject.cs" />
     <Compile Include="Objects\Coin.cs" />
     <Compile Include="Objects\House.cs" />
     <Compile Include="EndlessLevelGenerator.cs" />
@@ -58,7 +59,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y $(TargetPath) "D:\Bizz\Unity\Runner\Assets\Plugins"</PostBuildEvent>
+    <PostBuildEvent>copy /Y $(TargetPath) "D:\Bizz\Unity\KalaqDaride\Assets\Plugins"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

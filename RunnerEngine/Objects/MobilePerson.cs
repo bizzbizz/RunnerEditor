@@ -11,6 +11,7 @@ namespace RunnerEngine.Objects
 		public MobilePerson(float x)
 		{
 			_x = x;
+			_variation = EndlessLevelGenerator.random.Next(0, 5);//???
 		}
 
 		/// <summary>
@@ -20,7 +21,7 @@ namespace RunnerEngine.Objects
 		/// <summary>
 		/// Type of game object
 		/// </summary>
-		public override ErgoType Type { get { return ErgoType.PersonWalk; } }
+		public override PoolObjectType Type { get { return PoolObjectType.Person; } }
 
 		public override int Variation { get { return _variation; } }
 		int _variation;
