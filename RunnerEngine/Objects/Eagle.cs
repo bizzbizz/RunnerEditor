@@ -13,6 +13,8 @@ namespace RunnerEngine.Objects
 			_x = x;
 			_lane = lane;
 			_variation = 0;
+			_movement = ErgoMovement.WalkLeft;
+			_speedMagnitude = 1;
 		}
 
 		/// <summary>

@@ -39,7 +39,7 @@
     <Compile Include="Objects\Coin.cs" />
     <Compile Include="Objects\House.cs" />
     <Compile Include="EndlessLevelGenerator.cs" />
-    <Compile Include="Enums\Cat.cs" />
+    <Compile Include="Enums\Lane.cs" />
     <Compile Include="Enums\Draft.cs" />
     <Compile Include="Enums\ErgoMovement.cs" />
     <Compile Include="Enums\ErgoType.cs" />

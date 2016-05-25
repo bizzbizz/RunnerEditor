@@ -6,65 +6,95 @@ namespace RunnerEngine
 {
 	public class Chunk
 	{
-		public float StartX;
-		public float Width;
-		public byte MainLanes;//bits of lanes (no zero) (lanes 1,2,3 represented as 1,2,4)
-		public Chunk Next;
-		public House House;
-		public BaseObject[] Cells;//vertical cells (0:ground,1,2,3)
+		public Chunk Next
+		{
+			get; set;
+		}
+		public float Width
+		{
+			get; private set;
+		}
+
+		float _startX;
+		Lanes _mainLanes;
+		GameplayDraft _draft;
+		District _scenery;
+		BaseObject[] _cells;//vertical cells (0:ground,1,2,3)
 
 		Chunk() { }
 		internal Chunk(Chunk prev, GameplayDraft draft, District scenery)
 		{
-			if(prev == null)
+			if (prev == null)
 			{
-				StartX = 0;
+				_startX = 0;
 			}
 			else
 			{
-				StartX = prev.StartX + prev.Width;
+				_startX = prev._startX + prev.Width;
 			}
-			MainLanes = 0;
-			if (draft.Has(GameplayDraft.SafeLane1))
-				MainLanes += 1;
-			if (draft.Has(GameplayDraft.SafeLane2))
-				MainLanes += 2;
-			if (draft.Has(GameplayDraft.SafeLane3))
-				MainLanes += 4;
-			Cells = new BaseObject[4];
-			if(draft.Has(GameplayDraft.House))
+			_draft = draft;
+			_mainLanes = (Lanes)(draft & GameplayDraft.SafeLanes);
+			_cells = new BaseObject[4];
+			_scenery = scenery;
+			if (draft.Has(GameplayDraft.Tree))
 			{
-				House = scenery.FindSuitableHouse(draft);
-				if (House != null)
-					Width += House.Width;
-			}
-			if(draft.Has(GameplayDraft.Tree))
-			{
-				Cells[0] = new Tree(StartX);
-				Width += 2;
-			}
-			if (draft.Has(GameplayDraft.Eagle))
-			{
-				if(draft.Has(GameplayDraft.DangerLane1))
-					Cells[1] = new Eagle(StartX, 1);
-				if (draft.Has(GameplayDraft.DangerLane2))
-					Cells[2] = new Eagle(StartX, 2);
+				bool large = draft.Has(GameplayDraft.DangerLane2);
+				int variation = EndlessLevelGenerator.GetRandomTree(large);
+				_cells[0] = new Tree(_startX, large, variation);
+
 				if (draft.Has(GameplayDraft.DangerLane3))
-					Cells[3] = new Eagle(StartX, 3);
-				Width += 2;
+					_cells[3] = new Eagle(_startX, 3);
+			}
+			if (draft.Has(GameplayDraft.House))
+			{
+				int hIndex = EndlessLevelGenerator.random.Next(0, _scenery.Houses.Length);
+				var hPrototype = _scenery.Houses[hIndex % _scenery.Houses.Length];
+				var house = hPrototype.CloneAt(_startX);
+				_cells[0] = house;
+				Width += house.Width;
+
+				bool rand = EndlessLevelGenerator.random.Next(0, 2) == 0;
+
+				//add cats or eagles
+				if (draft.Has(GameplayDraft.DangerLane1) && hPrototype.CatSignature.Has(Lanes.Lane1))
+				{
+					house.CatSignature |= Lanes.Lane1;
+					house._cats[0] = hPrototype._cats[0].Clone();
+				}
+				else
+				{
+					//_cells[1] = new Eagle(_startX, 1);
+				}
+				if (draft.Has(GameplayDraft.DangerLane2) && hPrototype.CatSignature.Has(Lanes.Lane2))
+				{
+					house.CatSignature |= Lanes.Lane2;
+					house._cats[1] = hPrototype._cats[1].Clone();
+				}
+				else
+				{
+					if(rand)
+					_cells[2] = new Eagle(_startX, 2);
+				}
+				if (draft.Has(GameplayDraft.DangerLane3) && hPrototype.CatSignature.Has(Lanes.Lane3))
+				{
+					house.CatSignature |= Lanes.Lane3;
+					house._cats[2] = hPrototype._cats[2].Clone();
+				}
+				else
+				{
+					if(!rand)
+					_cells[3] = new Eagle(_startX, 3);
+				}
+
 			}
 		}
 
 		public IEnumerable<BaseObject> MakeOthers()
 		{
 			var list = new List<BaseObject>();
-			if (House != null)
+			foreach (var cell in _cells)
 			{
-				list.Add(new House(StartX, House.Variation));
-			}
-			foreach (var cell in Cells)
-			{
-				if(cell!=null)
+				if (cell != null)
 				{
 					list.Add(cell);
 				}
@@ -74,44 +104,21 @@ namespace RunnerEngine
 		public IEnumerable<BaseObject> MakePeople(int count)
 		{
 			var people = new BaseObject[count];
-			float x = StartX;
+			float x = 0;
 			for (int i = 0; i < count; i++)
 			{
-				people[i] = new MobilePerson(x);
-				x += 2;
+				people[i] = new MobilePerson(x + _startX);
+				x += (1 + (float)(EndlessLevelGenerator.random.NextDouble() * 3));
 			}
-			if (x > Width) Width = x;
+			Width = System.Math.Max(x, Width);
 			return people;
 		}
 		public IEnumerable<BaseObject> MakeCoins(float innerSpace)
 		{
 			List<BaseObject> list = new List<BaseObject>();
+			Width = System.Math.Max(innerSpace * 4, Width);
 			int count = (int)(Width / innerSpace);
-			float x = StartX;
-			if (MainLanes == 7)
-			{
-				list.AddRange(Coin.CreateCollection(x, MainLanes, 3, innerSpace));
-				x += innerSpace * 3;
-				count /= 2;
-				MainLanes = 2;
-			}
-			else if (MainLanes == 5 || MainLanes == 6)
-			{
-				list.AddRange(Coin.CreateCollection(x, MainLanes, 3, innerSpace));
-				x += innerSpace * 3;
-				count /= 2;
-				MainLanes = 4;
-			}
-			else if (MainLanes == 3)
-			{
-				list.AddRange(Coin.CreateCollection(x, MainLanes, 3, innerSpace));
-				x += innerSpace * 3;
-				count /= 2;
-				MainLanes = 1;
-			}
-			list.AddRange(Coin.CreateCollection(x, MainLanes, count, innerSpace));
-			x += innerSpace * count;
-			if (x > Width) Width = x;
+			list.AddRange(Coin.CreateCollection(_startX, _mainLanes, count, innerSpace));
 			return list;
 		}
 	}

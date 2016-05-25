@@ -24,7 +24,8 @@ namespace RunnerEngine
 				str += " [";
 				foreach (var item in Children)
 				{
-					str += item.ToString();
+					if (item != null)
+						str += item.ToString();
 				}
 				str += "] ";
 			}

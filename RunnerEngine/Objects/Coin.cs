@@ -13,21 +13,41 @@ namespace RunnerEngine.Objects
 			_x = x;
 			_lane = lane;
 		}
-		public static IEnumerable<BaseObject> CreateCollection(float startX, byte lane, int count, float innerSpace)
+		public static IEnumerable<BaseObject> CreateCollection(float startX, Lanes lanes, int count, float innerSpace)
 		{
-			Coin[] coins = new Coin[count * lane.Ones()];
-			int j = 0;
-			for (byte i = 0; i < 3; i++)
+			List<BaseObject> coins = new List<BaseObject>();
+			if (count < 3) return coins;
+			float x = startX;
+
+			//byte l = lanes.GetRandomLane();
+			//for (int i = 0; i < count; i++)
+			//{
+			//	coins[i] = new Coin(x, l);
+			//	x += innerSpace;
+			//}
+			//return coins;
+
+			int sprint = count;
+			if (count >= 6)
 			{
-				if (lane.HasBit(i))
-				{
-					float x = startX;
-					for (; j < count; j++)
-					{
-						coins[j] = new Coin(x, (byte)(i + 1));
-						x += innerSpace;
-					}
-				}
+				if (count <= 9)
+					sprint = EndlessLevelGenerator.random.Next(3, count);
+				else
+					sprint = EndlessLevelGenerator.random.Next(3, count - 3);
+			}
+			byte lane = lanes.GetRandomLane();
+			for (int i = 0; i < sprint; i++)
+			{
+				if (lane > 0)
+					coins.Add(new Coin(x, lane));
+				x += innerSpace;
+			}
+			lane = lanes.GetRandomLane();
+			for (int i = sprint; i < count; i++)
+			{
+				if (lane > 0)
+					coins.Add(new Coin(x, lane));
+				x += innerSpace;
 			}
 			return coins;
 		}

@@ -8,11 +8,11 @@ namespace RunnerEngine.Objects
 	/// </summary>
 	public class Tree : BaseObject
 	{
-		public Tree(float x)
+		public Tree(float x, bool large, int variation)
 		{
 			_x = x;
-			_variation = 0;
-			_largeTree = false;
+			_variation = variation;
+			_largeTree = large;
 		}
 
 		/// <summary>

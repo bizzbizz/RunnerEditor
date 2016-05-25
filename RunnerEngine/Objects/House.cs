@@ -1,4 +1,5 @@
 ﻿using RunnerEngine.Enums;
+using RunnerEngine;
 using System.Collections.Generic;
 
 namespace RunnerEngine.Objects
@@ -15,22 +16,29 @@ namespace RunnerEngine.Objects
 			_x = x;
 			_variation = variation;
 		}
-		public House(int variationId, float width, CatLanes cats, params float[] catX)
+		public House CloneAt(float x)
+		{
+			var house = new House(x, Variation);
+			house.Width = Width;
+			house._cats = new Cat[3];
+			return house;
+		}
+		public House(int variationId, float width, Lanes dangerLanes, params float[] catX)
 		{
 			_variation = variationId;
 			Width = width;
-			CatSignature = cats;
+			CatSignature = dangerLanes;
 
-			_cats = new List<BaseObject>();
-			if (cats.Has(CatLanes.DangerLane1))
-				_cats.Add(new Cat(catX[0], 0));
-			if (cats.Has(CatLanes.DangerLane2))
-				_cats.Add(new Cat(catX[1], 1));
-			if (cats.Has(CatLanes.DangerLane3))
-				_cats.Add(new Cat(catX[2], 2));
+			_cats = new Cat[3];
+			if (dangerLanes.Has(Lanes.Lane1))
+				_cats[0] = new Cat(catX[0], 1);
+			if (dangerLanes.Has(Lanes.Lane2))
+				_cats[1] = new Cat(catX[1], 2);
+			if (dangerLanes.Has(Lanes.Lane3))
+				_cats[2] = new Cat(catX[2], 3);
 		}
 
-		internal CatLanes CatSignature;
+		internal Lanes CatSignature;
 		/// <summary>
 		/// Width of chunk the house is in
 		/// </summary>
@@ -49,6 +57,7 @@ namespace RunnerEngine.Objects
 		int _variation;
 
 		public override IEnumerable<BaseObject> Children { get { return _cats; } }
-		List<BaseObject> _cats;
+		internal Cat[] _cats;
+
 	}
 }

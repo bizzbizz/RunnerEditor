@@ -10,16 +10,5 @@ namespace RunnerEngine
 	{
 		public int Background;
 		public House[] Houses;
-		internal House FindSuitableHouse(GameplayDraft draft)
-		{
-			int startRandom = EndlessLevelGenerator.random.Next(0, Houses.Length);
-			for (int i = 0; i < Houses.Length; i++)
-			{
-				var house = Houses[(i + startRandom) % Houses.Length];
-				if (house.CatSignature.Match(draft))
-					return house;
-			}
-			return null;
-		}
 	}
 }

@@ -20,7 +20,7 @@ namespace RunnerEngine
 		/// <param name="src">enum source value</param>
 		/// <param name="cmp">given value</param>
 		/// <returns></returns>
-		public static bool Has(this CatLanes src, CatLanes cmp)
+		public static bool Has(this Lanes src, Lanes cmp)
 		{
 			return (src & cmp) == cmp;
 		}

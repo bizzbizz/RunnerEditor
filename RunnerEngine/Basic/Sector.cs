@@ -13,6 +13,7 @@ namespace RunnerEngine
 		public override PoolObjectType Type { get { return PoolObjectType.Block; } }
 
 		List<BaseObject> _objects;
+		public List<GameplayDraft> build;
 
 		internal Seed seed;
 		internal Chunk FirstChunk;
@@ -23,7 +24,7 @@ namespace RunnerEngine
 			//first sector (empty)
 			seed = Seed.FirstSeed();
 			_objects = new List<BaseObject>();
-			Width = 5;
+			Width = 10;
 
 			_x = 0;
 			universalX = Width;
@@ -42,107 +43,41 @@ namespace RunnerEngine
 			_objects = new List<BaseObject>();
 			Scenery = scenery;
 
-			BuildIt();
+			BuildIt(blockNumber);
 			ChunkIt();
 
-			if (Width < 12) Width = 12;
+			//if (Width < 12) Width = 12;
 			_x = universalX;
 			universalX += Width;
 		}
 
 
-		public List<GameplayDraft> build;
-		void BuildIt()
+		void BuildIt(int blockNumber)
 		{
 			build = new List<GameplayDraft>();
 
 			GameplayDraft current = GameplayDraft.Empty;
-			for (int i = 0; i < 8; i++)
+			build.Add(current);
+			for (int i = 1; i < 10 + blockNumber * 2; i++)
 			{
-				if (EndlessLevelGenerator.random.Next(0, 3) == 0)
-				{
-					//lower possibility
-					switch (current)
-					{
-						case GameplayDraft.Empty:
-							//keep empty
-							break;
-						case GameplayDraft.Tree:
-							//switch to house
-							current = GameplayDraft.House;
-							break;
-						case GameplayDraft.House:
-							//switch to tree
-							current = GameplayDraft.Tree;
-							break;
-						default:
-							break;
-					}
-				}
+				int phase = EndlessLevelGenerator.random.Next(0, 10);
+				if (phase < 2)
+					current = GameplayDraft.Empty | DraftBuilder.RandomDanger(false);
+				else if (phase < 5)
+					current = GameplayDraft.Tree | DraftBuilder.RandomDanger(true);
 				else
-				{
-					//higher possibility
-					if (current == GameplayDraft.Empty)
-					{
-						//advance to tree
-						if (EndlessLevelGenerator.random.Next(0, 2) == 0)
-							current = GameplayDraft.Tree;
-						//advance to house
-						else
-							current = GameplayDraft.House;
-					}
-					//else keep current GameplayDraft for duplication
-				}
+					current = GameplayDraft.House | DraftBuilder.RandomDanger(false);
 				build.Add(current);
-			}
-			build.Add(GameplayDraft.Empty);
-
-			//insert eagle when two neighbor trees found
-			int currentIndex = 1;
-			while (currentIndex < build.Count)
-			{
-				if (build[currentIndex - 1] == GameplayDraft.Tree
-					&& build[currentIndex] == GameplayDraft.Tree)
-				{
-					build.Insert(currentIndex, GameplayDraft.Eagle);
-					//jump forward to avoid many eagles
-					currentIndex += 2;
-				}
-				else currentIndex++;
 			}
 
 			//add lanes to build
-			currentIndex = 1;
+			int currentIndex = 1;
+			build[0] |= DraftBuilder.StartSafeLane();
 			while (currentIndex < build.Count)
 			{
-				if (build[currentIndex - 1] == GameplayDraft.Empty)
-				{
-					//after an empty
-					build[currentIndex] |= DraftBuilder.RandomSafeLane();
-				}
-				else
-				{
-					//continue
-					var lane = DraftBuilder.ContinueSafeLane(build[currentIndex - 1]);
-					if (build[currentIndex].Has(GameplayDraft.Tree))
-					{
-						//on a tree
-						//if (lane.Has(GameplayDraft.SafeLane1))
-						//	lane = GameplayDraft.Empty;
-					}
-					else
-					{
-						build[currentIndex] |= lane;
-					}
-				}
-				currentIndex++;
-			}
-
-			//block some lanes
-			currentIndex = 0;
-			while (currentIndex < build.Count)
-			{
-				build[currentIndex] |= DraftBuilder.BlockSafeLane(build[currentIndex]);
+				//continue a lane to a neighbor lane
+				build[currentIndex] |= DraftBuilder.ContinueSafeLane(build[currentIndex - 1], build[currentIndex]);
+				//build[currentIndex] |= DraftBuilder.ParallelDangerLane(build[currentIndex]);
 				currentIndex++;
 			}
 		}
@@ -152,53 +87,24 @@ namespace RunnerEngine
 			int currentIndex = 1;
 			FirstChunk = new Chunk(null, build[0], Scenery);
 			Chunk currentChunk = FirstChunk;
+
 			while (currentIndex < build.Count)
 			{
-				currentChunk.Next = new Chunk(currentChunk, build[currentIndex], Scenery);
+				//new chunk
+				var newChunk = new Chunk(currentChunk, build[currentIndex], Scenery);
+				_objects.AddRange(newChunk.MakeOthers());
+				if (currentIndex % 5 != 0 && currentIndex % 7 != 0 && currentIndex % 8 != 0 && currentIndex % 13 != 0)
+					_objects.AddRange(newChunk.MakeCoins((float)EndlessLevelGenerator.random.NextDouble() * .25f + .75f));
+				else
+					_objects.AddRange(newChunk.MakePeople(EndlessLevelGenerator.random.Next(1, 3)));
+
+				//sector width
+				Width += newChunk.Width;
+
+				//next chunk
+				currentChunk.Next = newChunk;
 				currentChunk = currentChunk.Next;
 				currentIndex++;
-			}
-
-			//finalize
-			currentChunk = FirstChunk;
-			bool hasCoin = false;//current flow
-			while (currentChunk != null)
-			{
-				//width
-				Width += currentChunk.Width;
-				//add coins and people
-				if (EndlessLevelGenerator.random.Next(0, 3) == 0)
-				{
-					//chance current flow
-					if (hasCoin)
-					{
-						hasCoin = false;
-						_objects.AddRange(currentChunk.MakePeople(EndlessLevelGenerator.random.Next(1, 3)));
-					}
-					else
-					{
-						hasCoin = true;
-						_objects.AddRange(currentChunk.MakeCoins((float)EndlessLevelGenerator.random.NextDouble() * 1.75f + .5f));
-					}
-
-				}
-				else
-				{
-					//keep current flow
-					if (hasCoin)
-					{
-						_objects.AddRange(currentChunk.MakeCoins((float)EndlessLevelGenerator.random.NextDouble() * 1.75f + .5f));
-					}
-					else
-					{
-						_objects.AddRange(currentChunk.MakePeople(EndlessLevelGenerator.random.Next(1, 3)));
-					}
-				}
-				//add tree, eagle, house and cat
-				_objects.AddRange(currentChunk.MakeOthers());
-
-				//goto next
-				currentChunk = currentChunk.Next;
 			}
 		}
 	}

@@ -8,6 +8,10 @@ namespace RunnerEngine.Objects
 	/// </summary>
 	public class Cat : BaseObject
 	{
+		public Cat Clone()
+		{
+			return new Cat(X, Lane);
+		}
 		public Cat(float x, byte lane)
 		{
 			_x = x;

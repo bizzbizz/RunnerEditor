@@ -1,41 +1,141 @@
 ﻿namespace RunnerEngine.Enums
 {
-	[System.Flags]
-	public enum GameplayDraft
-	{
-		Empty = 0,
-		Tree = 0x10,
-		Cat = 0x20,
-		Eagle = 0x40,
 
-		House = 0x80,
-
-		SafeLane1 = 0x100,
-		SafeLane2 = 0x200,
-		SafeLane3 = 0x400,
-
-		DangerLane1 = 0x1000,
-		DangerLane2 = 0x2000,
-		DangerLane3 = 0x4000,
-	}
 	internal static class DraftBuilder
 	{
+		static GameplayDraft[,] transition = new[,]
+		{
+			//from empty
+			{
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane2 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane1,
+				GameplayDraft.Empty,
+			},
+			//from safe lane 1
+			{
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane1,
+				GameplayDraft.Empty,
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane1,
+				GameplayDraft.Empty,
+			},
+			//from safe lane 2
+			{
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane1,
+				GameplayDraft.Empty,
+			},
+			//from safe lane 1,2
+			{
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane1,
+				GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane1,
+				GameplayDraft.Empty,
+			},
+			//from safe lane 3
+			{
+				GameplayDraft.SafeLane2 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane2 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.Empty,
+				GameplayDraft.Empty,
+			},
+			//from safe lane 1,3
+			{
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane1,
+				GameplayDraft.Empty,
+			},
+			//from safe lane 2,3
+			{
+				GameplayDraft.SafeLane2 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane2 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane1,
+				GameplayDraft.Empty,
+			},
+			//from safe lane 1,2,3
+			{
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane2 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane3,
+				GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane2,
+				GameplayDraft.SafeLane1,
+				GameplayDraft.Empty,
+			},
+		};
 		static GameplayDraft[] safelanes = new[] { GameplayDraft.SafeLane1, GameplayDraft.SafeLane2, GameplayDraft.SafeLane3 };
 		static GameplayDraft[] dangerlanes = new[] { GameplayDraft.DangerLane1, GameplayDraft.DangerLane2, GameplayDraft.DangerLane3 };
-		internal static GameplayDraft RandomSafeLane()
+		static GameplayDraft[] dangerlanescombo = new[]
 		{
-			return safelanes[EndlessLevelGenerator.random.Next(0, 3)];
-		}
-		internal static GameplayDraft ContinueSafeLane(GameplayDraft before)
+			GameplayDraft.Empty,
+			GameplayDraft.DangerLane1,
+			GameplayDraft.DangerLane2,
+			GameplayDraft.DangerLane3,
+			GameplayDraft.Empty,
+			GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2,
+			GameplayDraft.SafeLane1 | GameplayDraft.SafeLane3,
+			GameplayDraft.SafeLane2 | GameplayDraft.SafeLane3,
+			GameplayDraft.Empty,
+			GameplayDraft.DangerLane1,
+			GameplayDraft.DangerLane2,
+			GameplayDraft.DangerLane3,
+			GameplayDraft.Empty,
+		};
+		static GameplayDraft[] dangerlanescombotree = new[]
 		{
-			if (before.Has(GameplayDraft.SafeLane1))
-				return safelanes[EndlessLevelGenerator.random.Next(0, 2)];
-			else if (before.Has(GameplayDraft.SafeLane3))
-				return safelanes[EndlessLevelGenerator.random.Next(1, 3)];
+			GameplayDraft.DangerLane1,
+			GameplayDraft.SafeLane1 | GameplayDraft.SafeLane2,
+			GameplayDraft.SafeLane1 | GameplayDraft.SafeLane3,
+		};
+
+
+		internal static GameplayDraft RandomDanger(bool tree)
+		{
+			if (tree)
+				return dangerlanescombotree[EndlessLevelGenerator.random.Next(0, dangerlanescombotree.Length)];
 			else
-				return safelanes[EndlessLevelGenerator.random.Next(0, 3)];
+				return dangerlanescombo[EndlessLevelGenerator.random.Next(0, dangerlanescombo.Length)];
 		}
-		internal static GameplayDraft BlockSafeLane(GameplayDraft current)
+		internal static GameplayDraft StartSafeLane()
+		{
+			return GameplayDraft.SafeLanes;
+		}
+		internal static GameplayDraft ContinueSafeLane(GameplayDraft before, GameplayDraft current)
+		{
+			return transition[before.SafeToIndex(), current.DangerToIndex()];
+		}
+		internal static GameplayDraft ParallelDangerLane(GameplayDraft current)
 		{
 			if (current.Has(GameplayDraft.Tree))
 			{

@@ -12,6 +12,15 @@ namespace RunnerEngine
 		//internal
 		internal static int ShortTreeCount, LargeTreeCount;
 		internal static int[] ShortTreeGroupCount, LargeTreeGroupCount;
+		internal static int GetRandomTree(bool large)
+		{
+			if (large)
+			{
+				return random.Next(0, LargeTreeCount);
+			}
+			else
+				return random.Next(0, ShortTreeCount);
+		}
 		internal static Random random = new Random(DateTime.Now.Millisecond);
 		public static int GetRandom() { return random.Next(); }
 
@@ -52,12 +61,12 @@ namespace RunnerEngine
 		/// <returns></returns>
 		public static Sector GetNextSector(float meters)
 		{
-			bool levelEnded = (meters >= NextLevelStartDistance);
-			if (levelEnded)
-			{
-				//go to next level
-				levelCounter++;
-			}
+			//bool levelEnded = (meters >= NextLevelStartDistance);
+			//if (levelEnded)
+			//{
+			//	//go to next level
+			//	levelCounter++;
+			//}
 			blockCounter++;
 
 			//build next (|first) block
@@ -69,7 +78,7 @@ namespace RunnerEngine
 			else
 			{
 				//go to next sector
-				int index = levelCounter % sceneries.Length;
+				int index = blockCounter % sceneries.Length;
 				//load and build sector
 				currentSector = new Sector(sceneries[index], blockCounter);
 				//???

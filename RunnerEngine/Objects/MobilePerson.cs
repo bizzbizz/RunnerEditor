@@ -12,6 +12,8 @@ namespace RunnerEngine.Objects
 		{
 			_x = x;
 			_variation = EndlessLevelGenerator.random.Next(0, 5);//???
+			_movement = ErgoMovement.WalkLeft;
+			_speedMagnitude = 1;
 		}
 
 		/// <summary>

@@ -21,10 +21,10 @@ namespace RunnerWorldEditor
 					Background = 0,
 					Houses = new []
 					{
-						new RunnerEngine.Objects.House(0, 7, RunnerEngine.Enums.CatLanes.DangerLane1, 2,2,2),
-						new RunnerEngine.Objects.House(1, 7, RunnerEngine.Enums.CatLanes.DangerLane2, 2,2,2),
-						new RunnerEngine.Objects.House(2, 7, RunnerEngine.Enums.CatLanes.DangerLane3, 2,2,2),
-						new RunnerEngine.Objects.House(3, 7, RunnerEngine.Enums.CatLanes.DangerLane1, 2,2,2),
+						new RunnerEngine.Objects.House(0, 7, RunnerEngine.Enums.Lanes.Lane1, 2,2,2),
+						new RunnerEngine.Objects.House(1, 7, RunnerEngine.Enums.Lanes.Lane2, 2,2,2),
+						new RunnerEngine.Objects.House(2, 7, RunnerEngine.Enums.Lanes.Lane3, 2,2,2),
+						new RunnerEngine.Objects.House(3, 7, RunnerEngine.Enums.Lanes.Lane1, 2,2,2),
 					}
 				},
 				new RunnerEngine.District
@@ -32,13 +32,13 @@ namespace RunnerWorldEditor
 					Background = 0,
 					Houses = new []
 					{
-						new RunnerEngine.Objects.House(4, 7, RunnerEngine.Enums.CatLanes.DangerLane1, 2,2,2),
-						new RunnerEngine.Objects.House(5, 7, RunnerEngine.Enums.CatLanes.DangerLane2, 2,2,2),
-						new RunnerEngine.Objects.House(6, 7, RunnerEngine.Enums.CatLanes.DangerLane3, 2,2,2),
-						new RunnerEngine.Objects.House(7, 7, RunnerEngine.Enums.CatLanes.DangerLane1, 2,2,2),
-						new RunnerEngine.Objects.House(8, 7, RunnerEngine.Enums.CatLanes.DangerLane1, 2,2,2),
-						new RunnerEngine.Objects.House(9, 7, RunnerEngine.Enums.CatLanes.DangerLane1, 2,2,2),
-						new RunnerEngine.Objects.House(10, 7, RunnerEngine.Enums.CatLanes.DangerLane1, 2,2,2),
+						new RunnerEngine.Objects.House(4, 7, RunnerEngine.Enums.Lanes.Lane1, 2,2,2),
+						new RunnerEngine.Objects.House(5, 7, RunnerEngine.Enums.Lanes.Lane2, 2,2,2),
+						new RunnerEngine.Objects.House(6, 7, RunnerEngine.Enums.Lanes.Lane3, 2,2,2),
+						new RunnerEngine.Objects.House(7, 7, RunnerEngine.Enums.Lanes.Lane1, 2,2,2),
+						new RunnerEngine.Objects.House(8, 7, RunnerEngine.Enums.Lanes.Lane1, 2,2,2),
+						new RunnerEngine.Objects.House(9, 7, RunnerEngine.Enums.Lanes.Lane1, 2,2,2),
+						new RunnerEngine.Objects.House(10, 7, RunnerEngine.Enums.Lanes.Lane1, 2,2,2),
 					}
 				},
 				new RunnerEngine.District
@@ -46,7 +46,7 @@ namespace RunnerWorldEditor
 					Background = 0,
 					Houses = new []
 					{
-						new RunnerEngine.Objects.House(11, 7, RunnerEngine.Enums.CatLanes.None,2,2,2),
+						new RunnerEngine.Objects.House(11, 7, RunnerEngine.Enums.Lanes.None,2,2,2),
 					}
 				},
 			});
