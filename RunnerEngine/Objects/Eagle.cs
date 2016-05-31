@@ -1,5 +1,4 @@
-﻿using System;
-using RunnerEngine.Enums;
+﻿using RunnerEngine.Enums;
 
 namespace RunnerEngine.Objects
 {

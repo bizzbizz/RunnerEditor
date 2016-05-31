@@ -15,15 +15,16 @@ namespace RunnerEngine
 			get; private set;
 		}
 
-		float _startX;
-		Lanes _mainLanes;
-		GameplayDraft _draft;
-		District _scenery;
+		float _startX;//relative to sector
+		Lanes _mainLanes;//safe lanes
+		GameplayDraft _draft;//supposed objects
+		District _district;//district scenery
 		BaseObject[] _cells;//vertical cells (0:ground,1,2,3)
 
 		Chunk() { }
-		internal Chunk(Chunk prev, GameplayDraft draft, District scenery)
+		internal Chunk(Chunk prev, GameplayDraft draft, District district)
 		{
+			//set start x
 			if (prev == null)
 			{
 				_startX = 0;
@@ -32,60 +33,73 @@ namespace RunnerEngine
 			{
 				_startX = prev._startX + prev.Width;
 			}
+
+			//set other members
 			_draft = draft;
 			_mainLanes = (Lanes)(draft & GameplayDraft.SafeLanes);
+			_district = district;
+
+			//set cells
 			_cells = new BaseObject[4];
-			_scenery = scenery;
 			if (draft.Has(GameplayDraft.Tree))
 			{
+				//select variation
 				bool large = draft.Has(GameplayDraft.DangerLane2);
 				int variation = EndlessLevelGenerator.GetRandomTree(large);
-				_cells[0] = new Tree(_startX, large, variation);
 
+				//add a tree
+				_cells[0] = new Tree(_startX, large, variation);
+				//move pointer forward
+				Width += 2f;
+
+				//add extra eagle
 				if (draft.Has(GameplayDraft.DangerLane3))
-					_cells[3] = new Eagle(_startX, 3);
+				{
+					_cells[3] = new Eagle(_startX + Width, 3);
+					//move pointer forward
+					Width += 2f;
+				}
 			}
 			if (draft.Has(GameplayDraft.House))
 			{
-				int hIndex = EndlessLevelGenerator.random.Next(0, _scenery.Houses.Length);
-				var hPrototype = _scenery.Houses[hIndex % _scenery.Houses.Length];
-				var house = hPrototype.CloneAt(_startX);
+				//select variation
+				int hIndex = EndlessLevelGenerator.random.Next(0, _district.Houses.Length);
+				var hPrototype = _district.Houses[hIndex % _district.Houses.Length];
+				var house = hPrototype.CloneAt(_startX + Width);
+
+				//add a house
 				_cells[0] = house;
+				//move pointer forward
 				Width += house.Width;
 
-				bool rand = EndlessLevelGenerator.random.Next(0, 2) == 0;
 
 				//add cats or eagles
 				if (draft.Has(GameplayDraft.DangerLane1) && hPrototype.CatSignature.Has(Lanes.Lane1))
 				{
+					//add cat on first floor
 					house.CatSignature |= Lanes.Lane1;
 					house._cats[0] = hPrototype._cats[0].Clone();
 				}
-				else
+				else if (draft.Has(GameplayDraft.DangerLane2) && hPrototype.CatSignature.Has(Lanes.Lane2))
 				{
-					//_cells[1] = new Eagle(_startX, 1);
-				}
-				if (draft.Has(GameplayDraft.DangerLane2) && hPrototype.CatSignature.Has(Lanes.Lane2))
-				{
+					//add cat on second floor
 					house.CatSignature |= Lanes.Lane2;
 					house._cats[1] = hPrototype._cats[1].Clone();
 				}
-				else
+				else if (draft.Has(GameplayDraft.DangerLane3) && hPrototype.CatSignature.Has(Lanes.Lane3))
 				{
-					if(rand)
-					_cells[2] = new Eagle(_startX, 2);
-				}
-				if (draft.Has(GameplayDraft.DangerLane3) && hPrototype.CatSignature.Has(Lanes.Lane3))
-				{
+					//add cat on third floor
 					house.CatSignature |= Lanes.Lane3;
 					house._cats[2] = hPrototype._cats[2].Clone();
 				}
 				else
 				{
-					if(!rand)
-					_cells[3] = new Eagle(_startX, 3);
+					//add eagle instead of cat
+					if(EndlessLevelGenerator.random.Next(0, 2) == 0)
+						_cells[2] = new Eagle(_startX, 2);
+					else
+						_cells[3] = new Eagle(_startX, 3);
 				}
-
 			}
 		}
 
