@@ -24,7 +24,7 @@ namespace RunnerEngine
 			//first sector (empty)
 			seed = Seed.FirstSeed();
 			_objects = new List<BaseObject>();
-			Width = 10;
+			Width = 20;
 
 			_x = 0;
 			universalX = Width;
@@ -106,6 +106,9 @@ namespace RunnerEngine
 				currentChunk = currentChunk.Next;
 				currentIndex++;
 			}
+			Width += 2;
+			_objects.Add(new Objects.Collectible(Width, (byte)EndlessLevelGenerator.random.Next(1,4)));
+			Width += 2;
 		}
 	}
 }

@@ -37,6 +37,7 @@
     <Compile Include="Basic\Chunk.cs" />
     <Compile Include="Enums\PoolObject.cs" />
     <Compile Include="Objects\Coin.cs" />
+    <Compile Include="Objects\Collectible.cs" />
     <Compile Include="Objects\House.cs" />
     <Compile Include="EndlessLevelGenerator.cs" />
     <Compile Include="Enums\Lane.cs" />
