@@ -18,7 +18,7 @@ namespace RunnerEngine
 		/// <param name="v">bird current speed</param>
 		public virtual void Calibrate(float x, float v)
 		{
-			_x -= (Vx / v) * (x + X);
+			_x -= Vx * (x + _x) / v;
 		}
 		#endregion
 	}

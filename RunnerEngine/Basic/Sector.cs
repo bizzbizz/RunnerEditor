@@ -101,14 +101,20 @@ namespace RunnerEngine
 				//sector width
 				Width += newChunk.Width;
 
+				if (Width - _lastFoodX > 4 && EndlessLevelGenerator.random.Next(0, 2) > 0)
+				{
+					Width += 2;
+					_objects.Add(new Objects.Collectible(Width, (byte)EndlessLevelGenerator.random.Next(1, 4)));
+					_lastFoodX = Width;
+				}
+
 				//next chunk
 				currentChunk.Next = newChunk;
 				currentChunk = currentChunk.Next;
 				currentIndex++;
 			}
 			Width += 2;
-			_objects.Add(new Objects.Collectible(Width, (byte)EndlessLevelGenerator.random.Next(1,4)));
-			Width += 2;
 		}
+		float _lastFoodX = 0;
 	}
 }

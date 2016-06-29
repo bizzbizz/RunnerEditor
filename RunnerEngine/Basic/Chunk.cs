@@ -121,7 +121,8 @@ namespace RunnerEngine
 			float x = 0;
 			for (int i = 0; i < count; i++)
 			{
-				people[i] = new MobilePerson(x + _startX);
+				//people[i] = new MobilePerson(x + _startX);
+				people[i] = new FixedPerson(x + _startX);
 				x += (1 + (float)(EndlessLevelGenerator.random.NextDouble() * 3));
 			}
 			Width = System.Math.Max(x, Width);

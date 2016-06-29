@@ -13,6 +13,12 @@ namespace RunnerEngine.Objects
 			_lane = lane;
 			_variation = EndlessLevelGenerator.random.Next(0,3);
 		}
+		public Collectible(float x, bool largeTree)
+		{
+			_x = x;
+			_lane = (byte)(largeTree ? 2 : 1);
+			_variation = 3;
+		}
 
 		/// <summary>
 		/// Lane number (0: ground; 1,2,3: air; etc.)
