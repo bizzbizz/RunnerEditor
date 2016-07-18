@@ -45,7 +45,7 @@ namespace RunnerEngine
 			{
 				//select variation
 				bool large = draft.Has(GameplayDraft.DangerLane2);
-				int variation = EndlessLevelGenerator.GetRandomTree(large);
+				int variation = EndlessLevelGenerator.random.Next();
 
 				//add a tree
 				_cells[0] = new Tree(_startX, large, variation);
@@ -74,32 +74,32 @@ namespace RunnerEngine
 
 
 				//add cats or eagles
-				if (draft.Has(GameplayDraft.DangerLane1) && hPrototype.CatSignature.Has(Lanes.Lane1))
-				{
-					//add cat on first floor
-					house.CatSignature |= Lanes.Lane1;
-					house._cats[0] = hPrototype._cats[0].Clone();
-				}
-				else if (draft.Has(GameplayDraft.DangerLane2) && hPrototype.CatSignature.Has(Lanes.Lane2))
-				{
-					//add cat on second floor
-					house.CatSignature |= Lanes.Lane2;
-					house._cats[1] = hPrototype._cats[1].Clone();
-				}
-				else if (draft.Has(GameplayDraft.DangerLane3) && hPrototype.CatSignature.Has(Lanes.Lane3))
-				{
-					//add cat on third floor
-					house.CatSignature |= Lanes.Lane3;
-					house._cats[2] = hPrototype._cats[2].Clone();
-				}
-				else
-				{
+				//if (draft.Has(GameplayDraft.DangerLane1) && hPrototype.CatSignature.Has(Lanes.Lane1))
+				//{
+				//	//add cat on first floor
+				//	house.CatSignature |= Lanes.Lane1;
+				//	house._cats[0] = hPrototype._cats[0].Clone();
+				//}
+				//else if (draft.Has(GameplayDraft.DangerLane2) && hPrototype.CatSignature.Has(Lanes.Lane2))
+				//{
+				//	//add cat on second floor
+				//	house.CatSignature |= Lanes.Lane2;
+				//	house._cats[1] = hPrototype._cats[1].Clone();
+				//}
+				//else if (draft.Has(GameplayDraft.DangerLane3) && hPrototype.CatSignature.Has(Lanes.Lane3))
+				//{
+				//	//add cat on third floor
+				//	house.CatSignature |= Lanes.Lane3;
+				//	house._cats[2] = hPrototype._cats[2].Clone();
+				//}
+				//else
+				//{
 					//add eagle instead of cat
 					if(EndlessLevelGenerator.random.Next(0, 2) == 0)
 						_cells[2] = new Eagle(_startX, 2);
 					else
 						_cells[3] = new Eagle(_startX, 3);
-				}
+				//}
 			}
 		}
 
@@ -115,14 +115,15 @@ namespace RunnerEngine
 			}
 			return list;
 		}
-		public IEnumerable<BaseObject> MakePeople(int count)
+		public IEnumerable<BaseObject> MakePeople(int count, int blockNumber)
 		{
 			var people = new BaseObject[count];
 			float x = 0;
 			for (int i = 0; i < count; i++)
 			{
 				//people[i] = new MobilePerson(x + _startX);
-				people[i] = new FixedPerson(x + _startX);
+				int variation = EndlessLevelGenerator.random.Next(0, blockNumber);
+				people[i] = new FixedPerson(x + _startX, variation);
 				x += (1 + (float)(EndlessLevelGenerator.random.NextDouble() * 3));
 			}
 			Width = System.Math.Max(x, Width);

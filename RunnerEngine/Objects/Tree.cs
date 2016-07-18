@@ -14,22 +14,22 @@ namespace RunnerEngine.Objects
 			_x = x;
 			_variation = variation;
 			_largeTree = large;
-			HasNest = EndlessLevelGenerator.random.NextDouble() > .5;
-			if(HasNest)
-			{
-				nest = new Collectible[1];
-				nest[0] = new Collectible(.2f, large);
-			}
+			//HasNest = EndlessLevelGenerator.random.NextDouble() > .5;
+			//if(HasNest)
+			//{
+			//	nest = new Collectible[1];
+			//	nest[0] = new Collectible(.2f, large);
+			//}
 		}
-		Collectible[] nest;
-		public override IEnumerable<BaseObject> Children
-		{
-			get
-			{
-				return nest;
-			}
-		}
-		public bool HasNest { get; internal set; }
+		//Collectible[] nest;
+		//public override IEnumerable<BaseObject> Children
+		//{
+		//	get
+		//	{
+		//		return nest;
+		//	}
+		//}
+		//public bool HasNest { get; internal set; }
 		/// <summary>
 		/// Lane number (0: ground; 1,2,3: air; etc.)
 		/// </summary>

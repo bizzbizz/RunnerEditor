@@ -7,11 +7,62 @@ namespace RunnerEngine.Objects
 	/// </summary>
 	public class Collectible : BaseObject
 	{
-		public Collectible(float x, byte lane)
+		Collectible()
 		{
-			_x = x;
-			_lane = lane;
-			_variation = EndlessLevelGenerator.random.Next(0,3);
+
+		}
+		public static Collectible CreateNext(float x)
+		{
+			nextVariationIndex++;
+			nextVariationIndex %= variations.Length;
+			return new Collectible
+			{
+				_x = x,
+				_lane = (byte)EndlessLevelGenerator.random.Next(1, 4),
+				_variation = variations[nextVariationIndex],
+			};
+		}
+		/*
+		0,1,2	foods
+		4		drink
+		5		turbo
+		6		shield
+		7		magnet
+		8		x2
+		9		oil
+		*/
+		static int[] variations = new int[]
+		{
+			4, 0, 6, 9, 7, 5, 1, 4, 0, 2, 9, 0, 5, 0, 4, 1, 8, 7, 4, 5, 0
+		};
+		static int nextVariationIndex = 0;
+
+		public static Collectible CreateFood(float x, byte lane)
+		{
+			return new Collectible
+			{
+				_x = x,
+				_lane = lane,
+				_variation = EndlessLevelGenerator.random.Next(0, 3),
+			};
+		}
+		public static Collectible CreateEnergy(float x, byte lane)
+		{
+			return new Collectible
+			{
+				_x = x,
+				_lane = lane,
+				_variation = 4,
+			};
+		}
+		public static Collectible CreateTimedCollectible(float x, byte lane)
+		{
+			return new Collectible
+			{
+				_x = x,
+				_lane = lane,
+				_variation = EndlessLevelGenerator.random.Next(5, 10),
+			};
 		}
 		public Collectible(float x, bool largeTree)
 		{

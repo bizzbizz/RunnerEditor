@@ -9,18 +9,6 @@ namespace RunnerEngine
 		static int levelCounter = 0;
 		static int blockCounter = 0;
 
-		//internal
-		internal static int ShortTreeCount, LargeTreeCount;
-		internal static int[] ShortTreeGroupCount, LargeTreeGroupCount;
-		internal static int GetRandomTree(bool large)
-		{
-			if (large)
-			{
-				return random.Next(0, LargeTreeCount);
-			}
-			else
-				return random.Next(0, ShortTreeCount);
-		}
 		internal static Random random = new Random(DateTime.Now.Millisecond);
 		public static int GetRandom() { return random.Next(); }
 
@@ -37,21 +25,6 @@ namespace RunnerEngine
 		public static void ConfigureDistricts(District[] districts)
 		{
 			sceneries = districts;
-		}
-		public static void ConfigureTrees(int[] shortTreeGroupCount, int[] largeTreeGroupCount)
-		{
-			ShortTreeGroupCount = shortTreeGroupCount;
-			LargeTreeGroupCount = largeTreeGroupCount;
-			ShortTreeCount = 0;
-			LargeTreeCount = 0;
-			foreach (var item in shortTreeGroupCount)
-			{
-				ShortTreeCount += item;
-			}
-			foreach (var item in largeTreeGroupCount)
-			{
-				LargeTreeCount += item;
-			}
 		}
 
 		/// <summary>

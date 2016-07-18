@@ -20,25 +20,25 @@ namespace RunnerEngine.Objects
 		{
 			var house = new House(x, Variation);
 			house.Width = Width;
-			house._cats = new Cat[3];
+			//house._cats = new Cat[3];
 			return house;
 		}
-		public House(int variationId, float width, Lanes dangerLanes, params float[] catX)
+		public House(int variationId, float width, Lanes dangerLanes/*, params float[] catX*/)
 		{
 			_variation = variationId;
 			Width = width;
-			CatSignature = dangerLanes;
+			//CatSignature = dangerLanes;
 
-			_cats = new Cat[3];
-			if (dangerLanes.Has(Lanes.Lane1))
-				_cats[0] = new Cat(catX[0], 1);
-			if (dangerLanes.Has(Lanes.Lane2))
-				_cats[1] = new Cat(catX[1], 2);
-			if (dangerLanes.Has(Lanes.Lane3))
-				_cats[2] = new Cat(catX[2], 3);
+			//_cats = new Cat[3];
+			//if (dangerLanes.Has(Lanes.Lane1))
+			//	_cats[0] = new Cat(catX[0], 1);
+			//if (dangerLanes.Has(Lanes.Lane2))
+			//	_cats[1] = new Cat(catX[1], 2);
+			//if (dangerLanes.Has(Lanes.Lane3))
+			//	_cats[2] = new Cat(catX[2], 3);
 		}
 
-		internal Lanes CatSignature;
+		//internal Lanes CatSignature;
 		/// <summary>
 		/// Width of chunk the house is in
 		/// </summary>
@@ -56,8 +56,8 @@ namespace RunnerEngine.Objects
 		public override int Variation { get { return _variation; } }
 		int _variation;
 
-		public override IEnumerable<BaseObject> Children { get { return _cats; } }
-		internal Cat[] _cats;
+		//public override IEnumerable<BaseObject> Children { get { return _cats; } }
+		//internal Cat[] _cats;
 
 	}
 }

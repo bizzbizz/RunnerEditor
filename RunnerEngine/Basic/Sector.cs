@@ -1,6 +1,5 @@
 ﻿using RunnerEngine.Enums;
 using System.Collections.Generic;
-using System;
 
 namespace RunnerEngine
 {
@@ -18,6 +17,7 @@ namespace RunnerEngine
 		internal Seed seed;
 		internal Chunk FirstChunk;
 		private static float universalX;
+		float _lastCollectibleX = 0;
 
 		internal Sector()
 		{
@@ -44,7 +44,7 @@ namespace RunnerEngine
 			Scenery = scenery;
 
 			BuildIt(blockNumber);
-			ChunkIt();
+			ChunkIt(blockNumber);
 
 			//if (Width < 12) Width = 12;
 			_x = universalX;
@@ -58,7 +58,7 @@ namespace RunnerEngine
 
 			GameplayDraft current = GameplayDraft.Empty;
 			build.Add(current);
-			for (int i = 1; i < 10 + blockNumber * 2; i++)
+			for (int i = 1; i < 3 + blockNumber * 2; i++)
 			{
 				int phase = EndlessLevelGenerator.random.Next(0, 10);
 				if (phase < 2)
@@ -81,7 +81,7 @@ namespace RunnerEngine
 				currentIndex++;
 			}
 		}
-		void ChunkIt()
+		void ChunkIt(int blockNumber)
 		{
 			//convert to chunks
 			int currentIndex = 1;
@@ -96,16 +96,16 @@ namespace RunnerEngine
 				if (currentIndex % 5 != 0 && currentIndex % 7 != 0 && currentIndex % 8 != 0 && currentIndex % 13 != 0)
 					_objects.AddRange(newChunk.MakeCoins((float)EndlessLevelGenerator.random.NextDouble() * .25f + .75f));
 				else
-					_objects.AddRange(newChunk.MakePeople(EndlessLevelGenerator.random.Next(1, 3)));
+					_objects.AddRange(newChunk.MakePeople(EndlessLevelGenerator.random.Next(1, 3), blockNumber));
 
 				//sector width
 				Width += newChunk.Width;
 
-				if (Width - _lastFoodX > 4 && EndlessLevelGenerator.random.Next(0, 2) > 0)
+				if (Width - _lastCollectibleX > 4)
 				{
-					Width += 2;
-					_objects.Add(new Objects.Collectible(Width, (byte)EndlessLevelGenerator.random.Next(1, 4)));
-					_lastFoodX = Width;
+						Width += 2;
+						_objects.Add(Objects.Collectible.CreateNext(Width));//add food
+						_lastCollectibleX = Width;
 				}
 
 				//next chunk
@@ -115,6 +115,5 @@ namespace RunnerEngine
 			}
 			Width += 2;
 		}
-		float _lastFoodX = 0;
 	}
 }
