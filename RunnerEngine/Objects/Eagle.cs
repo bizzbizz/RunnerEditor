@@ -11,9 +11,23 @@ namespace RunnerEngine.Objects
 		{
 			_x = x;
 			_lane = lane;
-			_variation = 0;
+			_variation = EndlessLevelGenerator.random.Next(0,3);
+			switch (_variation)
+			{
+				case 0://normal
+					_speedMagnitude = 1;
+					break;
+				case 1://fast
+					_speedMagnitude = 3.5f;
+					break;
+				case 2://sinuside
+					_speedMagnitude = 1;
+					break;
+				default:
+					_speedMagnitude = 1;
+					break;
+			}
 			_movement = ErgoMovement.WalkLeft;
-			_speedMagnitude = 1;
 		}
 
 		/// <summary>
